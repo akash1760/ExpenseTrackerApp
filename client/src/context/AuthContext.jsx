@@ -6,7 +6,10 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 // Set up axios base URL and interceptors
-axios.defaults.baseURL = 'http://localhost:5000/api'; // <--- IMPORTANT: Base URL for all API calls
+// axios.defaults.baseURL = 'http://localhost:5000/api'; // <--- IMPORTANT: Base URL for all API calls
+
+
+axios.defaults.baseURL = import.meta.env.VITE_APP_BACKEND_URL;
 
 // Add a request interceptor to attach the token
 axios.interceptors.request.use(
