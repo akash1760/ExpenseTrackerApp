@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, Button, Alert, Spinner, Table, Modal, Form } from 'react-bootstrap';
 import { format } from 'date-fns';
-import DatePicker from 'react-datepicker'; // Make sure DatePicker is imported for the modal
-import 'react-datepicker/dist/react-datepicker.css'; // And its CSS
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const BusinessCredit = () => {
     const [businessCredits, setBusinessCredits] = useState([]);
@@ -20,8 +20,8 @@ const BusinessCredit = () => {
         setLoading(true);
         setError('');
         try {
-            // This axios call will automatically use the baseURL and authorization header from AuthContext setup
-            const res = await axios.get('/business-credits');
+            // CORRECTED: Added '/api' prefix
+            const res = await axios.get('/api/business-credits');
             setBusinessCredits(res.data);
             setMessage(''); // Clear any previous success message on re-fetch
         } catch (err) {
@@ -51,7 +51,8 @@ const BusinessCredit = () => {
         if (!selectedCredit) return;
 
         try {
-            await axios.put(`/business-credits/pay/${selectedCredit._id}`, {
+            // CORRECTED: Added '/api' prefix
+            await axios.put(`/api/business-credits/pay/${selectedCredit._id}`, {
                 paymentMethod,
                 paymentDate
             });

@@ -19,7 +19,8 @@ const Categories = () => {
         setLoading(true);
         setError('');
         try {
-            const res = await axios.get('http://localhost:5000/api/categories');
+            // CORRECTED: Added '/api' prefix
+            const res = await axios.get('/api/categories');
             setCategories(res.data);
         } catch (err) {
             console.error('Error fetching categories:', err);
@@ -42,7 +43,8 @@ const Categories = () => {
             return;
         }
         try {
-            await axios.post('http://localhost:5000/api/categories', { name, type });
+            // CORRECTED: Added '/api' prefix
+            await axios.post('/api/categories', { name, type });
             setMessage('Category added successfully!');
             setName('');
             setType('personal');
@@ -58,7 +60,8 @@ const Categories = () => {
             setMessage('');
             setError('');
             try {
-                await axios.delete(`http://localhost:5000/api/categories/${id}`);
+                // CORRECTED: Added '/api' prefix
+                await axios.delete(`/api/categories/${id}`);
                 setMessage('Category deleted successfully!');
                 fetchCategories(); // Refresh the list
             } catch (err) {
@@ -84,7 +87,8 @@ const Categories = () => {
             return;
         }
         try {
-            await axios.put(`http://localhost:5000/api/categories/${currentCategory._id}`, { name: editName, type: editType });
+            // CORRECTED: Added '/api' prefix
+            await axios.put(`/api/categories/${currentCategory._id}`, { name: editName, type: editType });
             setMessage('Category updated successfully!');
             setShowEditModal(false);
             fetchCategories(); // Refresh the list

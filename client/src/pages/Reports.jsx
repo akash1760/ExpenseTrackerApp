@@ -18,20 +18,26 @@ const Reports = () => {
         setLoading(true);
         setError('');
         try {
-            let url = 'http://localhost:5000/api/expenses/reports';
+            let url = '/api/expenses/reports'; // Base URL for reports
             let params = {};
 
             if (reportType === 'daily') {
                 url += `/daily/${format(startDate, 'yyyy-MM-dd')}`;
             } else if (reportType === 'monthly') {
+                // Assuming you'll add a monthly report endpoint on backend later
+                // For now, this might hit a 404 if not implemented
                 url += `/monthly/${format(startDate, 'yyyy-MM')}`;
             } else { // custom
+                url += '/summary'; // Using the existing summary endpoint for custom range
                 params = {
                     startDate: format(startDate, 'yyyy-MM-dd'),
                     endDate: format(endDate, 'yyyy-MM-dd'),
+                    // You might want to add groupBy: 'category' or 'type' for custom summary
+                    groupBy: 'category' // Defaulting for custom range for now
                 };
             }
 
+            // CORRECTED: Added '/api' prefix to the base URL for reports
             const res = await axios.get(url, { params });
             setReportData(res.data);
         } catch (err) {
@@ -66,8 +72,8 @@ const Reports = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {reportData.dailyExpenses.map((group) => (
-                                    <tr key={group._id}>
+                                {reportData.dailyExpenses.map((group, index) => ( // Added index for key if _id not unique for group
+                                    <tr key={group._id?.categoryId || index}>
                                         <td>{group.categoryName}</td>
                                         <td>{group.categoryType}</td>
                                         <td>${group.totalAmount.toFixed(2)}</td>
@@ -79,26 +85,28 @@ const Reports = () => {
                 </div>
             );
         } else if (reportType === 'monthly') {
+            // This part assumes you will implement a specific monthly report endpoint
+            // For now, it might show a generic message or error if backend route is not ready
             return (
                 <div>
-                    <h3 className="h5 mb-3">Total Spent: ${reportData.totalMonthlySpend?.toFixed(2) || '0.00'}</h3>
-                    {reportData.monthlyExpenses?.length === 0 ? (
+                    <h3 className="h5 mb-3">Monthly Report Summary</h3>
+                    {reportData.report?.length === 0 ? ( // Assuming structure similar to summary
                         <p className="text-muted">No expenses for this month.</p>
                     ) : (
                         <Table striped bordered hover responsive>
                             <thead>
                                 <tr>
-                                    <th>Category</th>
+                                    <th>Year-Month</th>
                                     <th>Type</th>
                                     <th>Total Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {reportData.monthlyExpenses.map((group) => (
-                                    <tr key={group._id}>
-                                        <td>{group.categoryName}</td>
-                                        <td>{group.categoryType}</td>
-                                        <td>${group.totalAmount.toFixed(2)}</td>
+                                {reportData.report.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{item.year}-{item.month.toString().padStart(2, '0')}</td>
+                                        <td>{item.type}</td>
+                                        <td>${item.totalAmount.toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -109,28 +117,24 @@ const Reports = () => {
         } else { // custom
             return (
                 <div>
-                    <h3 className="h5 mb-3">Total Spent: ${reportData.totalCustomSpend?.toFixed(2) || '0.00'}</h3>
-                    {reportData.customExpenses?.length === 0 ? (
+                    <h3 className="h5 mb-3">Total Spent: ${reportData.totalOverallSpend?.toFixed(2) || '0.00'}</h3>
+                    {reportData.report?.length === 0 ? ( // Assuming structure similar to summary
                         <p className="text-muted">No expenses for this period.</p>
                     ) : (
                         <Table striped bordered hover responsive>
                             <thead>
                                 <tr>
-                                    <th>Date</th>
                                     <th>Category</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Payment Method</th>
+                                    <th>Type</th>
+                                    <th>Total Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {reportData.customExpenses.map((expense) => (
-                                    <tr key={expense._id}>
-                                        <td>{format(new Date(expense.date), 'PPP')}</td>
-                                        <td>{expense.categoryName} ({expense.type})</td>
-                                        <td>{expense.description}</td>
-                                        <td>${expense.amount.toFixed(2)}</td>
-                                        <td>{expense.paymentMethod}</td>
+                                {reportData.report.map((item, index) => (
+                                    <tr key={item.categoryId || index}>
+                                        <td>{item.categoryName}</td>
+                                        <td>{item.categoryType}</td>
+                                        <td>${item.totalAmount.toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
