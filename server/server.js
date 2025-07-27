@@ -15,8 +15,8 @@ const MONGO_URI = process.env.MONGO_URI;
 // Middleware
 app.use(express.json()); // Body parser for JSON
 app.use(cors({
-    origin: ['http://localhost:5173','https://expensetrackerbyakash.netlify.app' ] ,// IMPORTANT: Match your frontend's exact URL
-    credentials: true, // Allow cookies/authorization headers
+    origin: ['http://localhost:5173', 'https://expensetrackerbyakash.netlify.app'], // <--- Verify this line
+    credentials: true,
 }));
 
 // Connect to MongoDB
