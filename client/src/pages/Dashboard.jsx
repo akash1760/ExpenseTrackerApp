@@ -7,19 +7,26 @@ import { Card, Button, ListGroup, Spinner, Alert } from 'react-bootstrap';
 
 // Detect API base URL
 const getApiUrl = () => {
+  // 1. Prefer env variable
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL; // prefer env variable
+    return import.meta.env.VITE_API_URL;
   }
 
-  const { hostname } = window.location;
+  // 2. Use frontend hostname
+  const { protocol, hostname } = window.location;
 
-  // If frontend runs on localhost → backend on localhost
+  // Local dev
   if (hostname === "localhost" || hostname === "127.0.0.1") {
     return "http://localhost:5000";
   }
 
-  // If frontend accessed via LAN IP → backend same LAN IP
-  return `http://${hostname}:5000`;
+  // LAN (e.g. mobile devices accessing via 192.168.x.x or 172.x.x.x)
+  if (/^(192\.168|172\.|10\.)/.test(hostname)) {
+    return `${protocol}//${hostname}:5000`;
+  }
+
+  // 3. Default fallback (same host, prod setup with reverse proxy)
+  return `${protocol}//${hostname}`;
 };
 
 const API_URL = getApiUrl();
@@ -36,11 +43,11 @@ const Dashboard = () => {
     try {
       const formattedDate = format(date, 'yyyy-MM-dd');
       const url = `${API_URL}/api/expenses/reports/daily/${formattedDate}`;
-      console.log("Fetching from:", url); // debug
+      console.log("📡 Fetching from:", url); // debug
       const res = await axios.get(url);
       setDailyReport(res.data);
     } catch (err) {
-      console.error('Error fetching daily report:', err);
+      console.error('❌ Error fetching daily report:', err.message);
       setError('Failed to fetch daily report.');
       setDailyReport(null);
     } finally {
