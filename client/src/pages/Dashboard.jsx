@@ -17,7 +17,7 @@ const Dashboard = () => {
     try {
       const formattedDate = format(date, 'yyyy-MM-dd');
       const res = await axios.get(
-        `http://localhost:5000/api/expenses/reports/daily/${formattedDate}`
+        `http://172.20.10.4:5000/api/expenses/reports/daily/${formattedDate}`
       );
       setDailyReport(res.data);
     } catch (err) {
