@@ -11,30 +11,33 @@ import BusinessCredit from './pages/BusinessCredit.jsx';
 import AppNavbar from './components/AppNavbar.jsx'; // Renamed from Navbar to AppNavbar to avoid conflict
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
-
+// client/src/App.jsx
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppNavbar /> {/* Use AppNavbar */}
-        <div className="container mt-4"> {/* Bootstrap container with top margin */}
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+        <AppNavbar />
 
-            {/* Protected Routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/add-expense" element={<AddExpense />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/business-credit" element={<BusinessCredit />} />
-            </Route>
-          </Routes>
-        </div>
+        {/* Main layout wrapper */}
+        <main className="container-fluid py-4">
+          <div className="container">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+
+              {/* Protected Routes */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/add-expense" element={<AddExpense />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/business-credit" element={<BusinessCredit />} />
+              </Route>
+            </Routes>
+          </div>
+        </main>
       </AuthProvider>
     </Router>
   );
 }
-
 export default App;
