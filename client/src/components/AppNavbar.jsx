@@ -10,7 +10,7 @@ const AppNavbar = () => {
     return (
         <Navbar bg="primary" variant="dark" expand="lg">
             <Container>
-                <Navbar.Brand as={Link} to="/">Expense Tracker</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/dashboard">Expense Tracker</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto"> {/* ms-auto pushes items to the right */}
