@@ -7,25 +7,17 @@ import { Card, Button, ListGroup, Spinner, Alert } from 'react-bootstrap';
 
 // Detect API base URL
 const getApiUrl = () => {
-  // 1. Prefer env variable
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
 
-  // 2. Use frontend hostname
   const { protocol, hostname } = window.location;
-
-  // Local dev
   if (hostname === "localhost" || hostname === "127.0.0.1") {
     return "http://localhost:5000";
   }
-
-  // LAN (e.g. mobile devices accessing via 192.168.x.x or 172.x.x.x)
   if (/^(192\.168|172\.|10\.)/.test(hostname)) {
     return `${protocol}//${hostname}:5000`;
   }
-
-  // 3. Default fallback (same host, prod setup with reverse proxy)
   return `${protocol}//${hostname}`;
 };
 
@@ -43,7 +35,7 @@ const Dashboard = () => {
     try {
       const formattedDate = format(date, 'yyyy-MM-dd');
       const url = `${API_URL}/api/expenses/reports/daily/${formattedDate}`;
-      console.log("📡 Fetching from:", url); // debug
+      console.log("📡 Fetching from:", url);
       const res = await axios.get(url);
       setDailyReport(res.data);
     } catch (err) {
@@ -88,9 +80,11 @@ const Dashboard = () => {
 
       {dailyReport && (
         <div>
-          <h3 className="h5 mb-3 text-center">Total Spent Today: ${dailyReport.totalDailySpend.toFixed(2)}</h3>
+          <h3 className="h5 mb-3 text-center">
+            Total Spent Today: ${((dailyReport?.totalDailySpend ?? 0).toFixed(2))}
+          </h3>
 
-          {dailyReport.dailyExpenses.length === 0 ? (
+          {(!dailyReport.dailyExpenses || dailyReport.dailyExpenses.length === 0) ? (
             <p className="text-muted text-center">No expenses recorded for this day.</p>
           ) : (
             <div className="row">
@@ -98,12 +92,12 @@ const Dashboard = () => {
                 <div key={index} className="col-md-6 mb-4">
                   <Card>
                     <Card.Header className="h5 capitalize">
-                      {catGroup.categoryName} ({catGroup.categoryType}) - Total: ${catGroup.totalAmount.toFixed(2)}
+                      {catGroup.categoryName} ({catGroup.categoryType}) - Total: ${((catGroup?.totalAmount ?? 0).toFixed(2))}
                     </Card.Header>
                     <ListGroup variant="flush">
                       {catGroup.expenses.map((exp) => (
                         <ListGroup.Item key={exp._id}>
-                          ${exp.amount.toFixed(2)} - {exp.description} (Paid via {exp.paymentMethod})
+                          ${(exp?.amount ?? 0).toFixed(2)} - {exp.description} (Paid via {exp.paymentMethod})
                           {exp.type === 'business' && !exp.isBusinessCreditPaid && (
                             <span className="ms-2 badge bg-warning text-dark">Business Credit - Unpaid</span>
                           )}
